@@ -12,7 +12,8 @@ Credits for original code this is based on: Jeffrey Cooperstein & Jeffrey Richte
 #include <WinIoCtl.h>
 #include <stdio.h>
 #include <sstream>
-#include <hash_map>
+#include <unordered_map>
+
 using namespace std;
 
 #define NO_WHERE 0

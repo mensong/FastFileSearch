@@ -30,6 +30,9 @@
     <ClInclude Include="CDriveIndex.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="FastFileSearch.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

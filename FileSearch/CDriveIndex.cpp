@@ -810,9 +810,11 @@ void CDriveIndex::PopulateIndex()
 	m_dwDriveFRN = IndexRoot;
 
 	MFT_ENUM_DATA med;
+	memset(&med, 0, sizeof(MFT_ENUM_DATA));
 	med.StartFileReferenceNumber = 0;
 	med.LowUsn = 0;
 	med.HighUsn = ujd.NextUsn;
+	med.MaxMajorVersion = 2;
 
 	// Process MFT in 64k chunks
 	BYTE pData[sizeof(DWORDLONG) + 0x10000];
@@ -832,14 +834,15 @@ void CDriveIndex::PopulateIndex()
 		}
 		med.StartFileReferenceNumber = * (DWORDLONG *) pData;
 	}
+	DWORD e = ::GetLastError();
 	
 	FileParents.reserve(num);
 	DirectoryParents.reserve(numDirs);
 	rgFiles.reserve(num);
 	rgDirectories.reserve(numDirs);
-	hash_map<DWORDLONG, HashMapEntry> hmFiles;
-	hash_map<DWORDLONG, HashMapEntry> hmDirectories;
-	hash_map<DWORDLONG, HashMapEntry>::iterator it;
+	unordered_map<DWORDLONG, HashMapEntry> hmFiles;
+	unordered_map<DWORDLONG, HashMapEntry> hmDirectories;
+	unordered_map<DWORDLONG, HashMapEntry>::iterator it;
 	med.StartFileReferenceNumber = 0;
 	while (DeviceIoControl(m_hVol, FSCTL_ENUM_USN_DATA, &med, sizeof(med), pData, sizeof(pData), &cb, NULL) != FALSE)
 	{
@@ -943,9 +946,11 @@ USNEntry CDriveIndex::FRNToName(DWORDLONG FRN)
 	Query(&ujd);
 
 	MFT_ENUM_DATA med;
+	memset(&med, 0, sizeof(MFT_ENUM_DATA));
 	med.StartFileReferenceNumber = FRN;
 	med.LowUsn = 0;
 	med.HighUsn = ujd.NextUsn;
+	med.MaxMajorVersion = 2;
 
 	// The structure only needs a single entry so it can be pretty small
 	BYTE pData[sizeof(DWORDLONG) + 0x300];
